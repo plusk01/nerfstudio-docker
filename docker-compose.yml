@@ -1,0 +1,27 @@
+version: "3.8"
+
+services:
+  nerfstudio:
+    image: nerfstudio:latest
+    build:
+      context: ..
+      dockerfile: ./.docker/Dockerfile
+    stdin_open: true
+    tty: true
+    environment:
+      NVIDIA_DRIVER_CAPABILITIES: compute,utility,graphics
+      DISPLAY: $DISPLAY
+    volumes:
+      - ../:/volume
+      - /tmp/.X11-unix:/tmp/.X11-unix
+    ports:
+      - "7008:7008"
+    working_dir: /volume
+    command: /bin/bash
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
